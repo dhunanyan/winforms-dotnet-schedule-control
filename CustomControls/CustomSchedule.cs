@@ -14,15 +14,7 @@ namespace CustomCalendar.CustomControls
 
     public partial class CustomSchedule : UserControl
     {
-
         private string[] daysOfWeek =  new string[]{ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-        private string[,] mounth = new string[6, 7] {
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
-            { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }};
         int displayMonth = 0;
         int displayYear = 0;
         public CustomSchedule()
@@ -31,11 +23,17 @@ namespace CustomCalendar.CustomControls
             displayMonth = GetCurrentMonth();
             displayYear = GetCurrentYear();
             GenerateCurrentMonthDays(displayMonth, displayYear);
+            SetMonthYear(GetCurrentMonth(), GetCurrentYear());
         }
 
         private string GetCurrentDate()
         {
             return DateTime.Now.ToString().Split(' ')[0];
+        }
+
+        private string GetCurrentDate(int day, int month, int year)
+        {
+            return DateTime.Parse($"{month}/{day}/{year}").ToString().Split(' ')[0];
         }
 
         private int GetCurrentYear()
@@ -47,10 +45,14 @@ namespace CustomCalendar.CustomControls
         {
             return int.Parse(GetCurrentDate().ToString().Split('/')[0]);
         }
-
         private int GetCurrentDay()
         {
             return int.Parse(GetCurrentDate().ToString().Split('/')[1]);
+        }
+
+        private void SetMonthYear(int month, int year)
+        {
+            labelMonthYear.Text = $"{DateTime.Parse(GetCurrentDate(1, month, year)):MMMM} {year}";
         }
 
         private int GetCurrentMonthDaysNumber(int year, int month)
@@ -58,7 +60,7 @@ namespace CustomCalendar.CustomControls
             return DateTime.DaysInMonth(year, month);
         }
 
-        private void InitializeCurrentMOnthDays()
+        private void InitializeCurrentMonthDays()
         {
             for (int i = 0; i < 42; i++)
             {
@@ -71,12 +73,17 @@ namespace CustomCalendar.CustomControls
 
         private void GenerateCurrentMonthDays(int month, int year)
         {
-            string currentMonthFirstDayOfWeek = DateTime.Parse($"{month}/{1}/{year}").DayOfWeek.ToString();
+            string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(1, month, year)).DayOfWeek.ToString();
             int firstDayOfMonthIndex = Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek);
             int dayCounter = 1;
+
             for (int i = 0; i < 42; i++)
             {
                 Button currentDayButton = (Button)flowLayoutPanelDays.Controls[i];
+                if(i % 7 == 0)
+                {
+                    currentDayButton.ForeColor = Color.FromArgb(56, 149, 211);
+                }
                 if (i < firstDayOfMonthIndex || i > GetCurrentMonthDaysNumber(year, month) + firstDayOfMonthIndex - 1)
                 {
                     currentDayButton.Text = null;
@@ -91,35 +98,42 @@ namespace CustomCalendar.CustomControls
                     dayCounter++;
                 }
             }
+
+            if(month == GetCurrentMonth() && year == GetCurrentYear())
+            {
+                flowLayoutPanelDays.Controls[GetCurrentDay() + firstDayOfMonthIndex - 1].BackColor = Color.FromArgb(72, 72, 72);
+            }
         }
         private void ButtonLeft_Click(object sender, EventArgs e)
         {
-            if (displayMonth < 1)
+            if (displayMonth < 2)
             {
                 displayMonth = 12;
                 displayYear--;
             }
             else
             {
-                displayYear--;
+                displayMonth--;
             }
-            InitializeCurrentMOnthDays();
+            InitializeCurrentMonthDays();
             GenerateCurrentMonthDays(displayMonth, displayYear);
+            SetMonthYear(displayMonth, displayYear);
         }
 
         private void ButtonRight_Click(object sender, EventArgs e)
         {
-            if (displayMonth > 12)
+            if (displayMonth > 11)
             {
                 displayMonth = 1;
                 displayYear++;
             }
             else
             {
-                displayYear++;
+                displayMonth++;
             }
-            InitializeCurrentMOnthDays();
+            InitializeCurrentMonthDays();
             GenerateCurrentMonthDays(displayMonth, displayYear);
+            SetMonthYear(displayMonth, displayYear);
         }
     }
 }
