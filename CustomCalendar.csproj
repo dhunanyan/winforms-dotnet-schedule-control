@@ -46,25 +46,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomControls\CustomSchedule.cs">
+    <Compile Include="CustomControls\CustomScheduleDay\CustomScheduleDay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\CustomSchedule\CustomSchedule.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CustomControls\CustomSchedule.Designer.cs">
+    <Compile Include="CustomControls\CustomSchedule\CustomSchedule.Designer.cs">
       <DependentUpon>CustomSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\CustomScheduleEvent.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormDayPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormDayPopup.Designer.cs">
+      <DependentUpon>FormDayPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CustomControls\CustomSchedule.resx">
+    <EmbeddedResource Include="CustomControls\CustomSchedule\CustomSchedule.resx">
       <DependentUpon>CustomSchedule.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormDayPopup.resx">
+      <DependentUpon>FormDayPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

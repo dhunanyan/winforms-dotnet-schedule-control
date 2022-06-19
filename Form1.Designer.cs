@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.customSchedule1 = new CustomCalendar.CustomControls.CustomSchedule();
+            this.customSchedule1 = new CustomCalendar.CustomControls.CustomSchedule.CustomSchedule();
             this.SuspendLayout();
             // 
             // customSchedule1
             // 
             this.customSchedule1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(28)))), ((int)(((byte)(29)))));
-            this.customSchedule1.Location = new System.Drawing.Point(179, 30);
+            this.customSchedule1.Location = new System.Drawing.Point(184, 45);
             this.customSchedule1.Margin = new System.Windows.Forms.Padding(0);
             this.customSchedule1.MaximumSize = new System.Drawing.Size(710, 680);
             this.customSchedule1.MinimumSize = new System.Drawing.Size(710, 680);
@@ -57,7 +57,7 @@
 
         #endregion
 
-        private CustomControls.CustomSchedule customSchedule1;
+        private CustomControls.CustomSchedule.CustomSchedule customSchedule1;
     }
 }
 
