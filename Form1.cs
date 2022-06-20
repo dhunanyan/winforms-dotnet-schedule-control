@@ -14,28 +14,11 @@ namespace CustomCalendar
 {
     public partial class Form1 : Form
     {
-        
-
         public Form1()
         {
             StartPosition = FormStartPosition.CenterScreen;
             InitializeComponent();
-            GetScheduleEvents();
-        }
-        
-        private void GetScheduleEvents()
-        {
-            foreach(Control c in ((FlowLayoutPanel)((FlowLayoutPanel)customSchedule1.Controls.Find("flowLayoutPanelMain", true)[0]).Controls.Find("flowLayoutPanelDays", true)[0]).Controls)
-            {
-                if (c is CustomScheduleDay)
-                {
-                    CustomScheduleDay currentDay = c as CustomScheduleDay;
-                    //if(!(currentDay.AddedEvents.Count == 0))
-                    //{
-                    //    AllEvents.Add(currentDay.Date, currentDay.AddedEvents);
-                    //}
-                }
-            }
+            this.customSchedule1.AllEvents = ((System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<CustomCalendar.CustomControls.CustomScheduleEvent>>)(new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<CustomCalendar.CustomControls.CustomScheduleEvent>>()));
         }
     }
 }

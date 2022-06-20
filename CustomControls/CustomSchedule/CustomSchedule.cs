@@ -10,8 +10,6 @@ using System.Windows.Forms;
 
 namespace CustomCalendar.CustomControls.CustomSchedule
 {
-
-
     public partial class CustomSchedule : UserControl
     {
         public Dictionary<string, List<CustomScheduleEvent>> AllEvents { get; set; } = new Dictionary<string, List<CustomScheduleEvent>>();
@@ -30,7 +28,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         int displayMonth = 0;
         int displayYear = 0;
         bool isWeekDisplayed = false;
-        int counter = 0;
+        public int counter = 0;
 
         public CustomSchedule()
         {
@@ -40,9 +38,6 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             GenerateCurrentMonthDays(displayMonth, displayYear);
             SetMonthYear(GetCurrentMonth(), GetCurrentYear());
             InitializeTimer();
-
-            Console.WriteLine(DateTime.Now.Second * 1000 + DateTime.Now.Millisecond);
-            Console.WriteLine(DateTime.Now.Millisecond);
         }
 
         private string GetCurrentDate()
@@ -59,6 +54,8 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             return int.Parse(GetCurrentDate().ToString().Split('/')[2].Split(' ')[0]);
         }
+//Error Invalid Resx file.Could not load type System.Collections.Generic.Dictionary
+//    Ensure that the necessary references have been added to your project.
 
         private int GetCurrentMonth()
         {
@@ -77,6 +74,51 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         public int GetCurrentMonthDaysNumber(int year, int month)
         {
             return DateTime.DaysInMonth(year, month);
+        }
+
+        private List<string> GetAllEventsKeys()
+        {
+            List<string> AllEventsKeys = (List<string>)AllEvents.Keys.ToList();
+            AllEventsKeys.Sort();
+            
+            return AllEventsKeys;
+        }
+
+        public string ConvertDateWithZeros(string date)
+        {
+            string[] array = date.Split('/');
+
+            if (int.Parse(array[0]) < 9)
+            {
+                array[0] = "0" + array[0];
+
+            }
+
+            if (int.Parse(array[1]) < 9)
+            {
+                array[1] = "0" + array[1];
+            }
+            string result = $"{array[0]}/{array[1]}/{array[2]}";
+
+            return result;
+        }
+
+        public DateTime ConvertStringToDateTime(string date)
+        {
+            string[] array = date.Split('/');
+
+            string result = $"{array[1]}/{array[0]}/{array[2]}";
+
+            return DateTime.Parse(result);
+        }
+
+        private string SwithMonthAndDayInDate(string date)
+        {
+            string[] array = date.Split('/');
+
+            string result = $"{int.Parse(array[1])}/{int.Parse(array[0])}/{array[2]}";
+
+            return result;
         }
 
         private void GenerateCurrentMonthDays(int month, int year)
@@ -100,7 +142,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                 }
                 else if(dayCounter <= GetCurrentMonthDaysNumber(year, month))
                 {
-                    currentDayPanel.Tag = $"{dayCounter}/{month}/{year}";
+                    currentDayPanel.Tag = ConvertDateWithZeros($"{dayCounter}/{month}/{year}");
                     currentDayPanel.Enabled = true;
                     currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && dayCounter == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
                     currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
@@ -146,7 +188,8 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                             Cursor = Cursors.Hand,
                             Location = new Point(0, 0),
                             Name = $"{currentEvent.Date}/{currentEvent.TimeFrom}-{currentEvent.TimeTo}",
-                            UseVisualStyleBackColor = false
+                            UseVisualStyleBackColor = false,
+                            Enabled = true
                         };
 
                         addedEvent.FlatAppearance.BorderSize = 1;
@@ -176,6 +219,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                 }
             }
         }
+
         private void ButtonLeft_Click(object sender, EventArgs e)
         {
             if (displayMonth < 2)
@@ -191,6 +235,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             GenerateCurrentMonthDays(displayMonth, displayYear);
             SetMonthYear(displayMonth, displayYear);
             FillMonthEvents();
+            DisabledPastEvents();
         }
 
         private void ButtonRight_Click(object sender, EventArgs e)
@@ -207,9 +252,10 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             GenerateCurrentMonthDays(displayMonth, displayYear);
             SetMonthYear(displayMonth, displayYear);
             FillMonthEvents();
+            DisabledPastEvents();
         }
 
-        private void CurrentDayButton_Click(object sender, EventArgs e)
+        public void CurrentDayButton_Click(object sender, EventArgs e)
         {
             CustomScheduleDay.CustomScheduleDay currentDayPanel = (CustomScheduleDay.CustomScheduleDay)sender;
             Form formBackground = new Form();
@@ -243,10 +289,10 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             }
         }
 
-        private void CurrentDayButton_MouseEnter(object sender, EventArgs e)
+        public void CurrentDayButton_MouseEnter(object sender, EventArgs e)
         {
             Panel currentDayPanel = (Panel)(sender);
-            if(currentDayPanel.Tag.ToString() == $"{GetCurrentDay()}/{GetCurrentMonth()}/{GetCurrentYear()}")
+            if(currentDayPanel.Tag.ToString() == ConvertDateWithZeros($"{GetCurrentDay()}/{GetCurrentMonth()}/{GetCurrentYear()}"))
             {
                 currentDayPanel.BackColor = Color.FromArgb(82, 82, 82);
             }
@@ -256,10 +302,10 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             }
         }
 
-        private void CurrentDayButton_MouseLeave(object sender, EventArgs e)
+        public void CurrentDayButton_MouseLeave(object sender, EventArgs e)
         {
             Panel currentDayPanel = (Panel)(sender);
-            if (currentDayPanel.Tag.ToString() == $"{GetCurrentDay()}/{GetCurrentMonth()}/{GetCurrentYear()}")
+            if (currentDayPanel.Tag.ToString() == ConvertDateWithZeros($"{GetCurrentDay()}/{GetCurrentMonth()}/{GetCurrentYear()}"))
             {
                 currentDayPanel.BackColor = Color.FromArgb(72, 72, 72);
             }
@@ -290,19 +336,31 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             flowLayoutPanelDays.Controls.Clear();
             if (isWeekDisplayed)
             {
-                currentButton.Text = "Display Month";
-
-                labelSun.Text = "Time";
-                labelSun.BackColor = Color.FromArgb(46, 46, 46);
-
-                GenereatePanelTime();
             }
             else
             {
-                currentButton.Text = "Display Week";
+                int labelTimeElementHeight = 5;
+                for(int i = 0; i < 24; i++)
+                {
+                    Label labelTimeElement = new Label
+                    {
+                        BackColor = Color.FromArgb(46, 46, 46),
+                        Font = new Font("Tw Cen MT Condensed", 10F, FontStyle.Regular, GraphicsUnit.Point, 238),
+                        ForeColor = Color.Gainsboro,
+                        Location = new Point(0, labelTimeElementHeight),
+                        Margin = new Padding(0),
+                        Name = $"labelTime{i + 1}",
+                        Size = new Size(70, 25),
+                        TabIndex = 6,
+                        Text = i + 1 >= 12 ? $"{i + 1} PM" : $"{i + 1} AM",
+                        TextAlign = ContentAlignment.MiddleCenter
+                    };
 
-                labelSun.Text = "Sun";
-                labelSun.BackColor = Color.FromArgb(29, 28, 29);
+                    flowLayoutPanelTime.Controls.Add(labelTimeElement);
+
+                    labelTimeElementHeight += 25;
+                }
+
 
                 displayMonth = GetCurrentMonth();
                 displayYear = GetCurrentYear();
@@ -311,6 +369,39 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             }
 
             FillMonthEvents();
+            DisabledPastEvents();
+        }
+
+        public void DisabledPastEvents()
+        {
+            foreach (string key in GetAllEventsKeys().ToList())
+            {
+                Console.WriteLine($"{key} IM HEREEEEEE: {DateTime.Compare(DateTime.Now, ConvertStringToDateTime(key))}");
+                Console.WriteLine(ConvertStringToDateTime(key));
+                Console.WriteLine(DateTime.Now.Date);
+                if ((String.Compare(DateTime.Now.Date.ToString().Split(' ')[0], SwithMonthAndDayInDate(key)) >= 0) && (DateTime.Now.Date.ToString().Split(' ')[0] != SwithMonthAndDayInDate(key)))
+                {
+                    foreach (CustomScheduleEvent eventInList in AllEvents[key].ToList())
+                    {
+                        eventInList.CurrentEvent.Enabled = false;
+                        Console.WriteLine(eventInList.CurrentEvent.Enabled);
+                    }
+                }
+
+                Console.WriteLine("end");
+            }
+
+            Console.WriteLine("ENDDDD \n");
+        }
+
+        private CustomScheduleEvent GetFirstEnabledEvent(string key)
+        {
+            if((AllEvents.Count <= 0) || (!AllEvents.Keys.Contains(key)))
+            {
+                return null;
+            }
+
+            return AllEvents[ConvertDateWithZeros(SwithMonthAndDayInDate(GetCurrentDate()))].ToList().Where(ev => ev.CurrentEvent.Enabled == true).FirstOrDefault();
         }
 
         private void InitializeTimer()
@@ -322,7 +413,19 @@ namespace CustomCalendar.CustomControls.CustomSchedule
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine(DateTime.Now.Minute);
+            CustomScheduleEvent eventToRemind = GetFirstEnabledEvent(ConvertDateWithZeros(SwithMonthAndDayInDate(GetCurrentDate())));
+
+
+            DisabledPastEvents();
+            if (AllEvents.Count > 0 && eventToRemind!=null)
+            {
+                Console.WriteLine($"First enabled event minutes: {eventToRemind.TimeFrom.Split(':')[1]}");
+            }
+            else
+            {
+                Console.WriteLine("Sorry no events :(");
+            }
+
             if ((DateTime.Now.Minute < 15) && (counter == 0))
             {
                 counter++;
@@ -344,11 +447,25 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             {
                 timer1.Interval = 1000 * 60 * 30;
                 counter++;
-                MessageBox.Show($"It's: {DateTime.Now}, Minutes: {DateTime.Now.Minute}", "Good job", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //CustomScheduleEvent eventToRemind = GetFirstEnabledEvent();
+
+                if((eventToRemind != null) && (AllEvents.Keys != null) && (eventToRemind.TimeFrom.Split(':')[1] == DateTime.Now.AddMinutes(15).ToString().Split(' ')[1].Split(':')[1]))
+                {
+
+                    MessageBox.Show(
+                    $"Upcoming Event: {eventToRemind.Title} \n" +
+                    $"Date: {eventToRemind.Date} {eventToRemind.TimeFrom}-{eventToRemind.TimeTo} \n" +
+                    $"Priority Level: {eventToRemind.Priority}", 
+                    "Good job", 
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Information);
+                }
             }
         }
 
         public FlowLayoutPanel flowLayoutPanelDays;
         public FlowLayoutPanel flowLayoutPanelMain;
+        public Timer timer1;
     }
 }

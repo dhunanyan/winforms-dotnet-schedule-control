@@ -28,19 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.customSchedule1 = new CustomCalendar.CustomControls.CustomSchedule.CustomSchedule();
             this.SuspendLayout();
             // 
             // customSchedule1
             // 
             this.customSchedule1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(28)))), ((int)(((byte)(29)))));
-            this.customSchedule1.Location = new System.Drawing.Point(184, 45);
+            this.customSchedule1.Location = new System.Drawing.Point(147, 44);
             this.customSchedule1.Margin = new System.Windows.Forms.Padding(0);
-            this.customSchedule1.MaximumSize = new System.Drawing.Size(710, 680);
-            this.customSchedule1.MinimumSize = new System.Drawing.Size(710, 680);
+            this.customSchedule1.MaximumSize = new System.Drawing.Size(780, 680);
+            this.customSchedule1.MinimumSize = new System.Drawing.Size(780, 680);
             this.customSchedule1.Name = "customSchedule1";
-            this.customSchedule1.Size = new System.Drawing.Size(710, 680);
+            this.customSchedule1.Size = new System.Drawing.Size(780, 680);
             this.customSchedule1.TabIndex = 0;
+            this.customSchedule1.Time = new System.DateTime(2022, 6, 20, 22, 58, 43, 50);
             // 
             // Form1
             // 

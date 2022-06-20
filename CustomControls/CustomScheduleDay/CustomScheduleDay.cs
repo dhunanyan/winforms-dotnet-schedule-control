@@ -33,7 +33,9 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
             flowLayoutPanelDay.Name = $"flowLayoutPanelDay{i + 1}";
             flowLayoutPanelDay.Size = new Size(70, 56);
             flowLayoutPanelDay.TabIndex = 1;
-            flowLayoutPanelDay.Enabled = false;
+            flowLayoutPanelDay.Click += new EventHandler(flowLayoutPanelDay_Click);
+            flowLayoutPanelDay.MouseEnter += new EventHandler(flowLayoutPanelDay_MouseEnter);
+            flowLayoutPanelDay.MouseLeave += new EventHandler(flowLayoutPanelDay_MouseLeave);
             // 
             // label
             // 
@@ -56,10 +58,24 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
             Name = $"panel{i + 1}";
             Size = new Size(90, 90);
             Text = null;
-            Enabled = false;
             BackColor = Color.FromArgb(80, 46, 46, 46);
             Controls.Add(flowLayoutPanelDay);
             Controls.Add(labelDay);
+        }
+
+        private void flowLayoutPanelDay_Click(object sender, EventArgs e)
+        {
+            caller.CurrentDayButton_Click(this, e);
+        }
+
+        private void flowLayoutPanelDay_MouseEnter(object sender, EventArgs e)
+        {
+            caller.CurrentDayButton_MouseEnter(this, e);
+        }
+
+        private void flowLayoutPanelDay_MouseLeave(object sender, EventArgs e)
+        {
+            caller.CurrentDayButton_MouseLeave(this, e);
         }
     }
 }

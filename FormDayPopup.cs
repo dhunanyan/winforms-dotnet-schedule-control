@@ -17,13 +17,19 @@ namespace CustomCalendar
     {
         public CustomScheduleDay caller;
 
-        public CustomScheduleEvent currentEvent = new CustomScheduleEvent();
+        public CustomScheduleEvent currentEvent;
+
+        Button addedEvent = new Button();
         public FormDayPopup(CustomScheduleDay caller)
         {
-            currentEvent.Date = caller.Date;
+            currentEvent = new CustomScheduleEvent(this)
+            {
+                Date = caller.caller.ConvertDateWithZeros(caller.Date)
+            };
             this.caller = caller;
             InitializeComponent();
         }
+
 
         public void GenerateDateTextBox(string text)
         {
@@ -62,6 +68,8 @@ namespace CustomCalendar
                 comboBoxTo.Items.Add(currentTime.ToString("HH:mm"));
                 currentTime = currentTime.AddMinutes(30);
             }
+
+            comboBoxTo.Items.Add("00:00");
         }
 
         private void comboBoxFrom_SelectedIndexChanged(object sender, EventArgs e)
@@ -92,24 +100,26 @@ namespace CustomCalendar
         {
             if(currentEvent.TimeFrom != null && currentEvent.TimeTo != null && currentEvent.Title != null && currentEvent.Priority != null)
             {
-                caller.caller.AllEvents.Add(currentEvent.Date, new List<CustomScheduleEvent> { currentEvent });
-
-                Button addedEvent = new Button()
+                if (caller.caller.AllEvents.Keys.Contains(currentEvent.Date))
                 {
-                    Text = "",
-                    Size = new Size(12, 12),
-                    Margin = new Padding(1),
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand,
-                    Location = new Point(0, 0),
-                    Name = $"{currentEvent.Date}/{currentEvent.TimeFrom}-{currentEvent.TimeTo}",
-                    UseVisualStyleBackColor = false
-                };
+                    caller.caller.AllEvents[currentEvent.Date].Add(currentEvent);
+                }
+                else
+                {
+                    caller.caller.AllEvents.Add(currentEvent.Date, new List<CustomScheduleEvent> { currentEvent });
+                }
 
+                addedEvent.Text = "";
+                addedEvent.Size = new Size(12, 12);
+                addedEvent.Margin = new Padding(1);
+                addedEvent.FlatStyle = FlatStyle.Flat;
+                addedEvent.Cursor = Cursors.Hand;
+                addedEvent.Location = new Point(0, 0);
+                addedEvent.Name = $"{currentEvent.Date} {currentEvent.TimeFrom}-{currentEvent.TimeTo}";
+                addedEvent.UseVisualStyleBackColor = false;
                 addedEvent.FlatAppearance.BorderSize = 1;
                 addedEvent.FlatAppearance.BorderColor = Color.FromArgb(92, 92, 92);
-
-                Console.WriteLine(currentEvent.Priority);
+                currentEvent.CurrentEvent = addedEvent;
 
                 if(currentEvent.Priority == "High")
                 {
@@ -130,6 +140,9 @@ namespace CustomCalendar
                 }
 
                 ((FlowLayoutPanel)caller.Controls.Find($"flowLayoutPanelDay{caller.Name.Split('l')[1]}", true)[0]).Controls.Add(addedEvent);
+                caller.caller.DisabledPastEvents();
+                caller.caller.timer1.Interval = 1;
+                caller.caller.counter = 0;
                 Close();
             }
             else

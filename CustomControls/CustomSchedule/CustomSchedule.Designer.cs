@@ -45,9 +45,15 @@
             this.labelSat = new System.Windows.Forms.Label();
             this.flowLayoutPanelDays = new System.Windows.Forms.FlowLayoutPanel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.flowLayoutPanelTime = new System.Windows.Forms.FlowLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.labelTime = new System.Windows.Forms.Label();
+            this.flowLayoutPanelContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanelMain.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.flowLayoutPanelWeekDays.SuspendLayout();
+            this.flowLayoutPanelTime.SuspendLayout();
+            this.flowLayoutPanelContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanelMain
@@ -55,9 +61,10 @@
             this.flowLayoutPanelMain.Controls.Add(this.panelHeader);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelWeekDays);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelDays);
-            this.flowLayoutPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanelMain.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanelMain.Location = new System.Drawing.Point(70, 0);
             this.flowLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelMain.MaximumSize = new System.Drawing.Size(710, 680);
+            this.flowLayoutPanelMain.MinimumSize = new System.Drawing.Size(710, 680);
             this.flowLayoutPanelMain.Name = "flowLayoutPanelMain";
             this.flowLayoutPanelMain.Size = new System.Drawing.Size(710, 680);
             this.flowLayoutPanelMain.TabIndex = 0;
@@ -254,22 +261,68 @@
             // 
             // timer1
             // 
+            this.timer1.Tag = "0";
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // flowLayoutPanelTime
+            // 
+            this.flowLayoutPanelTime.Controls.Add(this.panel1);
+            this.flowLayoutPanelTime.Controls.Add(this.labelTime);
+            this.flowLayoutPanelTime.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanelTime.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelTime.Name = "flowLayoutPanelTime";
+            this.flowLayoutPanelTime.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
+            this.flowLayoutPanelTime.Size = new System.Drawing.Size(70, 680);
+            this.flowLayoutPanelTime.TabIndex = 1;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(72)))), ((int)(((byte)(97)))), ((int)(((byte)(163)))));
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(70, 35);
+            this.panel1.TabIndex = 5;
+            // 
+            // labelTime
+            // 
+            this.labelTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.labelTime.Font = new System.Drawing.Font("Tw Cen MT Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelTime.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelTime.Location = new System.Drawing.Point(0, 35);
+            this.labelTime.Margin = new System.Windows.Forms.Padding(0, 0, 0, 5);
+            this.labelTime.Name = "labelTime";
+            this.labelTime.Size = new System.Drawing.Size(70, 35);
+            this.labelTime.TabIndex = 4;
+            this.labelTime.Text = "Week";
+            this.labelTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // flowLayoutPanelContainer
+            // 
+            this.flowLayoutPanelContainer.Controls.Add(this.flowLayoutPanelTime);
+            this.flowLayoutPanelContainer.Controls.Add(this.flowLayoutPanelMain);
+            this.flowLayoutPanelContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelContainer.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanelContainer.Name = "flowLayoutPanelContainer";
+            this.flowLayoutPanelContainer.Size = new System.Drawing.Size(780, 680);
+            this.flowLayoutPanelContainer.TabIndex = 2;
             // 
             // CustomSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(28)))), ((int)(((byte)(29)))));
-            this.Controls.Add(this.flowLayoutPanelMain);
+            this.Controls.Add(this.flowLayoutPanelContainer);
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.MaximumSize = new System.Drawing.Size(710, 680);
-            this.MinimumSize = new System.Drawing.Size(710, 680);
+            this.MaximumSize = new System.Drawing.Size(780, 680);
+            this.MinimumSize = new System.Drawing.Size(780, 680);
             this.Name = "CustomSchedule";
-            this.Size = new System.Drawing.Size(710, 680);
+            this.Size = new System.Drawing.Size(780, 680);
             this.flowLayoutPanelMain.ResumeLayout(false);
             this.panelHeader.ResumeLayout(false);
             this.flowLayoutPanelWeekDays.ResumeLayout(false);
+            this.flowLayoutPanelTime.ResumeLayout(false);
+            this.flowLayoutPanelContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -289,6 +342,9 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelWeekDays;
         private System.Windows.Forms.Button buttonChange;
         private System.Windows.Forms.Label labelSun;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTime;
+        private System.Windows.Forms.Label labelTime;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelContainer;
     }
 }
