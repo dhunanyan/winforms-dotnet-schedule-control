@@ -49,6 +49,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelTime = new System.Windows.Forms.Label();
             this.flowLayoutPanelContainer = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanelTimeLabels = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanelMain.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.flowLayoutPanelWeekDays.SuspendLayout();
@@ -268,10 +269,10 @@
             // 
             this.flowLayoutPanelTime.Controls.Add(this.panel1);
             this.flowLayoutPanelTime.Controls.Add(this.labelTime);
+            this.flowLayoutPanelTime.Controls.Add(this.flowLayoutPanelTimeLabels);
             this.flowLayoutPanelTime.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelTime.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelTime.Name = "flowLayoutPanelTime";
-            this.flowLayoutPanelTime.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.flowLayoutPanelTime.Size = new System.Drawing.Size(70, 680);
             this.flowLayoutPanelTime.TabIndex = 1;
             // 
@@ -290,7 +291,7 @@
             this.labelTime.Font = new System.Drawing.Font("Tw Cen MT Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.labelTime.ForeColor = System.Drawing.Color.Gainsboro;
             this.labelTime.Location = new System.Drawing.Point(0, 35);
-            this.labelTime.Margin = new System.Windows.Forms.Padding(0, 0, 0, 5);
+            this.labelTime.Margin = new System.Windows.Forms.Padding(0);
             this.labelTime.Name = "labelTime";
             this.labelTime.Size = new System.Drawing.Size(70, 35);
             this.labelTime.TabIndex = 4;
@@ -306,6 +307,15 @@
             this.flowLayoutPanelContainer.Name = "flowLayoutPanelContainer";
             this.flowLayoutPanelContainer.Size = new System.Drawing.Size(780, 680);
             this.flowLayoutPanelContainer.TabIndex = 2;
+            // 
+            // flowLayoutPanelTimeLabels
+            // 
+            this.flowLayoutPanelTimeLabels.Location = new System.Drawing.Point(0, 70);
+            this.flowLayoutPanelTimeLabels.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelTimeLabels.Name = "flowLayoutPanelTimeLabels";
+            this.flowLayoutPanelTimeLabels.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
+            this.flowLayoutPanelTimeLabels.Size = new System.Drawing.Size(70, 610);
+            this.flowLayoutPanelTimeLabels.TabIndex = 6;
             // 
             // CustomSchedule
             // 
@@ -346,5 +356,6 @@
         private System.Windows.Forms.Label labelTime;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelContainer;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTimeLabels;
     }
 }

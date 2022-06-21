@@ -27,17 +27,20 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         };
         int displayMonth = 0;
         int displayYear = 0;
+        int displayDay = 0;
         bool isWeekDisplayed = false;
         public int counter = 0;
 
         public CustomSchedule()
         {
             InitializeComponent();
+            displayDay = GetCurrentDay();
             displayMonth = GetCurrentMonth();
             displayYear = GetCurrentYear();
-            GenerateCurrentMonthDays(displayMonth, displayYear);
-            SetMonthYear(GetCurrentMonth(), GetCurrentYear());
+            GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
+            SetMonthYear(GetCurrentDay(), GetCurrentMonth(), GetCurrentYear());
             InitializeTimer();
+            GenerateTimePanel(isWeekDisplayed);
         }
 
         private string GetCurrentDate()
@@ -54,8 +57,6 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             return int.Parse(GetCurrentDate().ToString().Split('/')[2].Split(' ')[0]);
         }
-//Error Invalid Resx file.Could not load type System.Collections.Generic.Dictionary
-//    Ensure that the necessary references have been added to your project.
 
         private int GetCurrentMonth()
         {
@@ -66,9 +67,10 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             return int.Parse(GetCurrentDate().ToString().Split('/')[1]);
         }
 
-        private void SetMonthYear(int month, int year)
+
+        private void SetMonthYear(int day, int month, int year)
         {
-            labelMonthYear.Text = $"{DateTime.Parse(GetCurrentDate(1, month, year)):MMMM} {year}";
+            labelMonthYear.Text = $"{DateTime.Parse(GetCurrentDate(day, month, year)):MMMM} {year}";
         }
 
         public int GetCurrentMonthDaysNumber(int year, int month)
@@ -121,47 +123,123 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             return result;
         }
 
-        private void GenerateCurrentMonthDays(int month, int year)
+        private void GenerateCurrentMonthDays(int day, int month, int year, bool isWeekDisplay)
         {
-            string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(1, month, year)).DayOfWeek.ToString();
-            int firstDayOfMonthIndex = Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek);
-            int dayCounter = 1;
-            int width = 10;
-            int height = 10;
             flowLayoutPanelDays.Controls.Clear();
-            for (int i = 0; i < 42; i++)
+            if (!isWeekDisplay)
             {
-                CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, dayCounter, $"{dayCounter}/{month}/{year}");
-                if (i < firstDayOfMonthIndex || i > GetCurrentMonthDaysNumber(year, month) + firstDayOfMonthIndex - 1)
+                string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(day, month, year)).DayOfWeek.ToString();
+                int firstDayOfMonthIndex = Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek);
+                int dayCounter = 1;
+                int width = 10;
+                int height = 10;
+                for (int i = 0; i < 42; i++)
                 {
-                    currentDayPanel.Text = null;
-                    currentDayPanel.Enabled = false;
-                    currentDayPanel.BackColor = Color.FromArgb(80, 46, 46, 46);
-                    currentDayPanel.Controls.Clear();
-                    currentDayPanel.Tag = 0;
+                    CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, dayCounter, $"{dayCounter}/{month}/{year}", isWeekDisplay);
+                    if (i < firstDayOfMonthIndex || i > GetCurrentMonthDaysNumber(year, month) + firstDayOfMonthIndex - 1)
+                    {
+                        currentDayPanel.Text = null;
+                        currentDayPanel.Enabled = false;
+                        currentDayPanel.BackColor = Color.FromArgb(80, 46, 46, 46);
+                        currentDayPanel.Controls.Clear();
+                        currentDayPanel.Tag = 0;
+                    }
+                    else if (dayCounter <= GetCurrentMonthDaysNumber(year, month))
+                    {
+                        currentDayPanel.Tag = ConvertDateWithZeros($"{dayCounter}/{month}/{year}");
+                        currentDayPanel.Enabled = true;
+                        currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && dayCounter == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
+                        currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
+                        currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
+                        currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
+                        dayCounter++;
+                    }
+
+                    if (width >= 610)
+                    {
+                        height += 100;
+                        width = 10;
+                    }
+                    else
+                    {
+                        width += 100;
+                    }
+
+                    flowLayoutPanelDays.Controls.Add(currentDayPanel);
                 }
-                else if(dayCounter <= GetCurrentMonthDaysNumber(year, month))
+            }
+            else
+            {
+                flowLayoutPanelDays.Padding = new Padding(5);
+                string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(day, month, year)).DayOfWeek.ToString();
+                int startDay = day;
+
+                if(day == GetCurrentDay())
                 {
-                    currentDayPanel.Tag = ConvertDateWithZeros($"{dayCounter}/{month}/{year}");
+                    startDay = 7 - Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek) + 1;
+                    while (!((startDay < day) && (day < startDay + 7)))
+                    {
+                        Console.WriteLine($"DAYS: {startDay}");
+                        startDay += 7;
+                    }
+                }
+
+
+                Console.WriteLine($"START DAY: {startDay}");
+
+
+                displayDay = startDay;
+
+                int width = 10;
+                int height = 610;
+
+
+                for(int i  = 0; i < 7; i++)
+                {
+                    if (startDay > GetCurrentMonthDaysNumber(year, month))
+                    {
+                        startDay = 1;
+                    }
+
+                    CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, startDay, $"{startDay}/{month}/{year}", isWeekDisplay);
+                    currentDayPanel.Tag = ConvertDateWithZeros($"{startDay}/{month}/{year}");
                     currentDayPanel.Enabled = true;
-                    currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && dayCounter == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
+                    currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && startDay == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
                     currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
                     currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
                     currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
-                    dayCounter++;
-                }
+                    
+                    flowLayoutPanelDays.Controls.Add(currentDayPanel);
 
-                if(width >= 610)
-                {
-                    height += 100;
-                    width = 10;
+                    startDay++;
+                    width += 10;
                 }
-                else
-                {
-                    width += 100;
-                }
+            }
+        }
 
-                flowLayoutPanelDays.Controls.Add(currentDayPanel);
+        private void GenerateTimePanel(bool isWeekDisplay)
+        {
+            flowLayoutPanelTimeLabels.Controls.Clear();
+            int labelTimeElementHeight = 5;
+
+            for (int i = 0; i < (isWeekDisplay ? 24 : 6); i++)
+            {
+                Label labelTimeElement = new Label
+                {
+                    BackColor = Color.FromArgb(46, 46, 46),
+                    Font = new Font("Tw Cen MT Condensed", 10F, FontStyle.Regular, GraphicsUnit.Point, 238),
+                    ForeColor = Color.Gainsboro,
+                    Location = new Point(0, labelTimeElementHeight),
+                    Margin = new Padding(0),
+                    Name = $"labelTime{i + 1}",
+                    Size = new Size(70, isWeekDisplay ? 25 : 600 / 6),
+                    Text = isWeekDisplay ? (i + 1 >= 12 ? $"{i + 1} PM" : $"{i + 1} AM") : $"Week {i + 1}",
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                flowLayoutPanelTimeLabels.Controls.Add(labelTimeElement);
+
+                labelTimeElementHeight += isWeekDisplay ? 25 : 600 / 6;
             }
         }
 
@@ -222,37 +300,74 @@ namespace CustomCalendar.CustomControls.CustomSchedule
 
         private void ButtonLeft_Click(object sender, EventArgs e)
         {
-            if (displayMonth < 2)
+            if (!isWeekDisplayed)
             {
-                displayMonth = 12;
-                displayYear--;
+                if (displayMonth < 2)
+                {
+                    displayMonth = 12;
+                    displayYear--;
+                }
+                else
+                {
+                    displayMonth--;
+                }
+
+                GenerateCurrentMonthDays(1, displayMonth, displayYear, isWeekDisplayed);
+                SetMonthYear(displayDay, displayMonth, displayYear);
+                FillMonthEvents();
             }
             else
             {
-                displayMonth--;
-            }
 
-            GenerateCurrentMonthDays(displayMonth, displayYear);
-            SetMonthYear(displayMonth, displayYear);
-            FillMonthEvents();
-            DisabledPastEvents();
+            }
         }
 
         private void ButtonRight_Click(object sender, EventArgs e)
         {
-            if (displayMonth > 11)
+            if (!isWeekDisplayed)
             {
-                displayMonth = 1;
-                displayYear++;
+                if (displayMonth > 11)
+                {
+                    displayMonth = 1;
+                    displayYear++;
+                }
+                else
+                {
+                    displayMonth++;
+                }
+                GenerateCurrentMonthDays(1, displayMonth, displayYear, isWeekDisplayed);
+                SetMonthYear(displayDay, displayMonth, displayYear);
             }
             else
             {
-                displayMonth++;
+                displayDay += 7;
+                Console.WriteLine($"BEFORE IF: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
+                if (displayDay > GetCurrentMonthDaysNumber(displayYear, displayMonth))
+                {
+                    Console.WriteLine($"IN IF1: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
+                    displayDay = GetCurrentMonthDaysNumber(displayYear, displayMonth) - displayDay;
+                    displayMonth++;
+                    Console.WriteLine($"IN IF2: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
+
+                }
+
+                Console.WriteLine($"AFTER IF: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
+
+
+                if (displayMonth > 11)
+                {
+                    displayMonth = 1;
+                    displayYear++;
+                }
+                else
+                {
+                    displayMonth++;
+                }
+
+                GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
             }
-            GenerateCurrentMonthDays(displayMonth, displayYear);
-            SetMonthYear(displayMonth, displayYear);
+
             FillMonthEvents();
-            DisabledPastEvents();
         }
 
         public void CurrentDayButton_Click(object sender, EventArgs e)
@@ -315,58 +430,19 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             }
         }
 
-        private void GenereatePanelTime()
-        {
-            Panel panelTime = new Panel();
-
-            panelTime.BackColor = Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            panelTime.Location = new Point(5, 5);
-            panelTime.Margin = new Padding(0);
-            panelTime.Name = "panelTime";
-            panelTime.Size = new Size(100, 600);
-            flowLayoutPanelDays.Controls.Add(panelTime);
-        }
-
         private void buttonChange_Click(object sender, EventArgs e)
         {
             Button currentButton = (Button)sender;
 
             isWeekDisplayed = !isWeekDisplayed;
 
-            flowLayoutPanelDays.Controls.Clear();
-            if (isWeekDisplayed)
-            {
-            }
-            else
-            {
-                int labelTimeElementHeight = 5;
-                for(int i = 0; i < 24; i++)
-                {
-                    Label labelTimeElement = new Label
-                    {
-                        BackColor = Color.FromArgb(46, 46, 46),
-                        Font = new Font("Tw Cen MT Condensed", 10F, FontStyle.Regular, GraphicsUnit.Point, 238),
-                        ForeColor = Color.Gainsboro,
-                        Location = new Point(0, labelTimeElementHeight),
-                        Margin = new Padding(0),
-                        Name = $"labelTime{i + 1}",
-                        Size = new Size(70, 25),
-                        TabIndex = 6,
-                        Text = i + 1 >= 12 ? $"{i + 1} PM" : $"{i + 1} AM",
-                        TextAlign = ContentAlignment.MiddleCenter
-                    };
+            displayDay = GetCurrentDay();
+            displayMonth = GetCurrentMonth();
+            displayYear = GetCurrentYear();
 
-                    flowLayoutPanelTime.Controls.Add(labelTimeElement);
-
-                    labelTimeElementHeight += 25;
-                }
-
-
-                displayMonth = GetCurrentMonth();
-                displayYear = GetCurrentYear();
-                GenerateCurrentMonthDays(displayMonth, displayYear);
-                SetMonthYear(GetCurrentMonth(), GetCurrentYear());
-            }
+            GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
+            SetMonthYear(GetCurrentDay(), GetCurrentMonth(), GetCurrentYear());
+            GenerateTimePanel(isWeekDisplayed);
 
             FillMonthEvents();
             DisabledPastEvents();

@@ -14,14 +14,14 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
 
         public string Date { get; set; }
 
-        public CustomScheduleDay(CustomSchedule.CustomSchedule caller, int i, int width, int height, int dayCounter, string date)
+        public CustomScheduleDay(CustomSchedule.CustomSchedule caller, int i, int width, int height, int dayCounter, string date, bool isWeekDisplay)
         {
-            IntializeDay(i, width, height, dayCounter);
+            IntializeDay(i, width, height, dayCounter, isWeekDisplay);
             this.caller = caller;
             Date = date;
         }
 
-        public void IntializeDay(int i, int width, int height, int dayCounter)
+        public void IntializeDay(int i, int width, int height, int dayCounter, bool isWeekDisplay)
         {
             FlowLayoutPanel flowLayoutPanelDay = new FlowLayoutPanel();
             Label labelDay = new Label();
@@ -54,9 +54,9 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
             Font = new Font("Tw Cen MT Condensed", 8.75F, System.Drawing.FontStyle.Bold);
             ForeColor = Color.Gainsboro;
             Location = new Point(width, height);
-            Margin = new Padding(5);
+            Margin = isWeekDisplay ? new Padding(2, 0, 2, 0) : new Padding(5);
             Name = $"panel{i + 1}";
-            Size = new Size(90, 90);
+            Size = new Size(isWeekDisplay ? 96 : 90, isWeekDisplay ? 600 : 90);
             Text = null;
             BackColor = Color.FromArgb(80, 46, 46, 46);
             Controls.Add(flowLayoutPanelDay);
