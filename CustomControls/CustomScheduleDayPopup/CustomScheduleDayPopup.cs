@@ -13,14 +13,14 @@ using System.Windows.Forms;
 
 namespace CustomCalendar
 {
-    public partial class FormDayPopup : Form
+    public partial class CustomScheduleDayPopup : Form
     {
         public CustomScheduleDay caller;
 
         public CustomScheduleEvent currentEvent;
 
         Button addedEvent = new Button();
-        public FormDayPopup(CustomScheduleDay caller)
+        public CustomScheduleDayPopup(CustomScheduleDay caller)
         {
             currentEvent = new CustomScheduleEvent(this)
             {
@@ -109,40 +109,77 @@ namespace CustomCalendar
                     caller.caller.AllEvents.Add(currentEvent.Date, new List<CustomScheduleEvent> { currentEvent });
                 }
 
-                addedEvent.Text = "";
-                addedEvent.Size = new Size(12, 12);
+                addedEvent.Font = new Font("Microsoft JhengHei Light", caller.caller.IsWeekDisplayed ? 8F : 4.5F, FontStyle.Bold);
+                addedEvent.ForeColor = Color.FromArgb(64, 64, 64);
+                addedEvent.Text = caller.caller.IsWeekDisplayed ? $"{currentEvent.Title}\r\n{currentEvent.TimeFrom}-{currentEvent.TimeTo}" : (currentEvent.Title.Length > 7 ? currentEvent.Title.Substring(0, 7) + "..." : currentEvent.Title);
+                addedEvent.Size = caller.caller.IsWeekDisplayed ? new Size(86, caller.caller.GetEventStartOrAnd(currentEvent.TimeTo) - caller.caller.GetEventStartOrAnd(currentEvent.TimeFrom)) : new Size(68, 16);
                 addedEvent.Margin = new Padding(1);
+                addedEvent.Padding = new Padding(0);
                 addedEvent.FlatStyle = FlatStyle.Flat;
                 addedEvent.Cursor = Cursors.Hand;
-                addedEvent.Location = new Point(0, 0);
+                addedEvent.Tag = caller.currentDayEventsCount;
+                addedEvent.Location = caller.caller.IsWeekDisplayed ? new Point(0, caller.caller.GetEventStartOrAnd(currentEvent.TimeFrom)) : new Point(0, 20 * caller.currentDayEventsCount);
                 addedEvent.Name = $"{currentEvent.Date} {currentEvent.TimeFrom}-{currentEvent.TimeTo}";
                 addedEvent.UseVisualStyleBackColor = false;
+                addedEvent.Enabled = false;
                 addedEvent.FlatAppearance.BorderSize = 1;
-                addedEvent.FlatAppearance.BorderColor = Color.FromArgb(92, 92, 92);
+                addedEvent.TextAlign = ContentAlignment.TopLeft;
                 currentEvent.CurrentEvent = addedEvent;
 
-                if(currentEvent.Priority == "High")
+                if (currentEvent.Priority == "Yellow")
                 {
-                    addedEvent.BackColor = Color.FromArgb(222, 23, 56);
+                    addedEvent.BackColor = Color.FromArgb(190, 253, 238, 101);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(253, 227, 0);
                 }
-                else if(currentEvent.Priority == "Medium")
+                else if(currentEvent.Priority == "Green")
                 {
-                    addedEvent.BackColor = Color.FromArgb(247, 222, 58);
-
+                    addedEvent.BackColor = Color.FromArgb(190, 82, 206, 144);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(0, 174, 86);
                 }
-                else if(currentEvent.Priority == "Low")
+                else if(currentEvent.Priority == "Orange")
                 {
-                    addedEvent.BackColor = Color.FromArgb(118, 187, 104);
+                    addedEvent.BackColor = Color.FromArgb(190, 232, 130, 93);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(218, 59, 1);
+                }
+                else if (currentEvent.Priority == "Blue")
+                {
+                    addedEvent.BackColor = Color.FromArgb(190, 92, 169, 229);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 212);
+                }
+                else if (currentEvent.Priority == "Red")
+                {
+                    addedEvent.BackColor = Color.FromArgb(190, 220, 98, 109);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(197, 15, 31);
                 }
                 else
                 {
-                    addedEvent.BackColor = Color.FromArgb(72, 97, 163);
+                    addedEvent.BackColor = Color.FromArgb(190, 177, 170, 235);
+                    addedEvent.FlatAppearance.BorderColor = Color.FromArgb(131, 120, 222);
                 }
 
-                ((FlowLayoutPanel)caller.Controls.Find($"flowLayoutPanelDay{caller.Name.Split('l')[1]}", true)[0]).Controls.Add(addedEvent);
+                ((Panel)caller.Controls.Find($"panelInnerEvents{caller.Name.Split('l')[1]}", true)[0]).Controls.Add(addedEvent);
+
+
+                if (caller.currentDayEventsCount > 2 && !caller.caller.IsWeekDisplayed)
+                {
+                    foreach(Button ev in ((Panel)caller.Controls.Find($"panelInnerEvents{caller.Name.Split('l')[1]}", true)[0]).Controls)
+                    {
+                        if (int.Parse(ev.Tag.ToString()) >= 2)
+                        {
+                            ev.Visible = false;
+                        }
+                    }
+
+                    caller.infoButton.Visible = true;
+                    caller.infoButton.Text = "+" + (caller.currentDayEventsCount - 1).ToString();
+                    caller.infoButton.ForeColor = Color.FromArgb(241, 241, 241);
+                }
+
                 caller.caller.DisabledPastEvents();
                 caller.caller.timer1.Interval = 1;
                 caller.caller.counter = 0;
+                caller.currentDayEventsCount++;
+                ((Panel)caller.Controls.Find($"panelInnerEvents{caller.Name.Split('l')[1]}", true)[0]).Controls.SetChildIndex(addedEvent, caller.caller.AllEvents[currentEvent.Date].Count() - Array.IndexOf(caller.caller.AllEvents[currentEvent.Date].ToArray(), currentEvent));
                 Close();
             }
             else

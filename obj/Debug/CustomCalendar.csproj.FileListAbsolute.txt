@@ -5,9 +5,9 @@ C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\ob
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.csproj.SuggestedBindingRedirects.cache
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.CustomControls.CustomSchedule.CustomSchedule.resources
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.Form1.resources
-C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.FormDayPopup.resources
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.Properties.Resources.resources
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.csproj.GenerateResource.cache
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.csproj.CoreCompileInputs.cache
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.exe
 C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.pdb
+C:\Users\dhunanyan\Desktop\AGH\sem4\programowanie-zaawansowane\CustomCalendar\obj\Debug\CustomCalendar.CustomScheduleDayPopup.resources

@@ -48,8 +48,8 @@
             this.flowLayoutPanelTime = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelTime = new System.Windows.Forms.Label();
-            this.flowLayoutPanelContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanelTimeLabels = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanelContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanelMain.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.flowLayoutPanelWeekDays.SuspendLayout();
@@ -298,6 +298,15 @@
             this.labelTime.Text = "Week";
             this.labelTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // flowLayoutPanelTimeLabels
+            // 
+            this.flowLayoutPanelTimeLabels.Location = new System.Drawing.Point(0, 70);
+            this.flowLayoutPanelTimeLabels.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelTimeLabels.Name = "flowLayoutPanelTimeLabels";
+            this.flowLayoutPanelTimeLabels.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
+            this.flowLayoutPanelTimeLabels.Size = new System.Drawing.Size(70, 610);
+            this.flowLayoutPanelTimeLabels.TabIndex = 6;
+            // 
             // flowLayoutPanelContainer
             // 
             this.flowLayoutPanelContainer.Controls.Add(this.flowLayoutPanelTime);
@@ -307,15 +316,6 @@
             this.flowLayoutPanelContainer.Name = "flowLayoutPanelContainer";
             this.flowLayoutPanelContainer.Size = new System.Drawing.Size(780, 680);
             this.flowLayoutPanelContainer.TabIndex = 2;
-            // 
-            // flowLayoutPanelTimeLabels
-            // 
-            this.flowLayoutPanelTimeLabels.Location = new System.Drawing.Point(0, 70);
-            this.flowLayoutPanelTimeLabels.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanelTimeLabels.Name = "flowLayoutPanelTimeLabels";
-            this.flowLayoutPanelTimeLabels.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.flowLayoutPanelTimeLabels.Size = new System.Drawing.Size(70, 610);
-            this.flowLayoutPanelTimeLabels.TabIndex = 6;
             // 
             // CustomSchedule
             // 

@@ -12,7 +12,10 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
     {
         public CustomSchedule.CustomSchedule caller;
 
+        public int currentDayEventsCount;
         public string Date { get; set; }
+
+        public Button infoButton;
 
         public CustomScheduleDay(CustomSchedule.CustomSchedule caller, int i, int width, int height, int dayCounter, string date, bool isWeekDisplay)
         {
@@ -21,30 +24,57 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
             Date = date;
         }
 
+
+        private Button GenerateInfoButton()
+        {
+            infoButton = new Button();
+            infoButton.Font = new Font("Microsoft JhengHei Light", 4.5F, FontStyle.Bold);
+            infoButton.Text = "";
+            infoButton.Size = new Size(68, 16);
+            infoButton.Margin = new Padding(1);
+            infoButton.Padding = new Padding(0);
+            infoButton.FlatStyle = FlatStyle.Flat;
+            infoButton.Location = new Point(0, 40);
+            infoButton.Name = $"infoButton";
+            infoButton.Enabled = false;
+            infoButton.Visible = false;
+            infoButton.Tag = -1;
+            infoButton.FlatAppearance.BorderSize = 1;
+            infoButton.TextAlign = ContentAlignment.TopCenter;
+            infoButton.BackColor = Color.FromArgb(94, 94, 94);
+            infoButton.FlatAppearance.BorderColor = Color.FromArgb(70, 70, 70);
+            infoButton.ForeColor = Color.FromArgb(241, 241, 241);
+
+            return infoButton;
+        }
+
         public void IntializeDay(int i, int width, int height, int dayCounter, bool isWeekDisplay)
         {
-            FlowLayoutPanel flowLayoutPanelDay = new FlowLayoutPanel();
+
+            Panel panelInnerEvents = new Panel();
             Label labelDay = new Label();
             // 
             // flowLayoutPanel
             // 
-            flowLayoutPanelDay.Location = new Point(10, 22);
-            flowLayoutPanelDay.Margin = new Padding(0);
-            flowLayoutPanelDay.Name = $"flowLayoutPanelDay{i + 1}";
-            flowLayoutPanelDay.Size = new Size(70, 56);
-            flowLayoutPanelDay.TabIndex = 1;
-            flowLayoutPanelDay.Click += new EventHandler(flowLayoutPanelDay_Click);
-            flowLayoutPanelDay.MouseEnter += new EventHandler(flowLayoutPanelDay_MouseEnter);
-            flowLayoutPanelDay.MouseLeave += new EventHandler(flowLayoutPanelDay_MouseLeave);
+            panelInnerEvents.Location = isWeekDisplay ? new Point(5, 0) : new Point(10, 22);
+            panelInnerEvents.Margin = new Padding(0);
+            panelInnerEvents.Padding = new Padding(0);
+            panelInnerEvents.Name = $"panelInnerEvents{i + 1}";
+            panelInnerEvents.Size = isWeekDisplay ? new Size(86, 600) : new Size(70, 56);
+            panelInnerEvents.TabIndex = 1;
+            panelInnerEvents.Click += new EventHandler(panelInnerEvents_Click);
+            panelInnerEvents.MouseEnter += new EventHandler(panelInnerEvents_MouseEnter);
+            panelInnerEvents.MouseLeave += new EventHandler(panelInnerEvents_MouseLeave);
             // 
             // label
             // 
             labelDay.Font = new Font("Tw Cen MT Condensed", 8.75F, FontStyle.Bold);
             labelDay.ForeColor = i % 7 == 0 ? Color.FromArgb(56, 149, 211) : Color.Gainsboro;
-            labelDay.Location = new Point(5, 5);
+            labelDay.BackColor = Color.FromArgb(0, 56, 149, 211);
+            labelDay.Location = isWeekDisplay ? new Point(0, 0) : new Point(5, 5);
             labelDay.Margin = new Padding(5, 5, 0, 0);
             labelDay.Name = $"label{i + 1}";
-            labelDay.Size = new Size(40, 15);
+            labelDay.Size = new Size(18, 15);
             labelDay.TabIndex = 0;
             labelDay.Text = dayCounter.ToString();
             //
@@ -59,21 +89,22 @@ namespace CustomCalendar.CustomControls.CustomScheduleDay
             Size = new Size(isWeekDisplay ? 96 : 90, isWeekDisplay ? 600 : 90);
             Text = null;
             BackColor = Color.FromArgb(80, 46, 46, 46);
-            Controls.Add(flowLayoutPanelDay);
+            panelInnerEvents.Controls.Add(GenerateInfoButton());
             Controls.Add(labelDay);
+            Controls.Add(panelInnerEvents);
         }
 
-        private void flowLayoutPanelDay_Click(object sender, EventArgs e)
+        private void panelInnerEvents_Click(object sender, EventArgs e)
         {
             caller.CurrentDayButton_Click(this, e);
         }
 
-        private void flowLayoutPanelDay_MouseEnter(object sender, EventArgs e)
+        private void panelInnerEvents_MouseEnter(object sender, EventArgs e)
         {
             caller.CurrentDayButton_MouseEnter(this, e);
         }
 
-        private void flowLayoutPanelDay_MouseLeave(object sender, EventArgs e)
+        private void panelInnerEvents_MouseLeave(object sender, EventArgs e)
         {
             caller.CurrentDayButton_MouseLeave(this, e);
         }

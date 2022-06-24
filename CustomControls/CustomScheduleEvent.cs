@@ -9,7 +9,7 @@ namespace CustomCalendar.CustomControls
 {
     public class CustomScheduleEvent
     {
-        public FormDayPopup caller;
+        public CustomScheduleDayPopup caller;
 
         public CustomScheduleEvent(string timeFrom, string timeTo, string date, string title, string priority)
         {
@@ -25,7 +25,7 @@ namespace CustomCalendar.CustomControls
 
         }
 
-        public CustomScheduleEvent(FormDayPopup caller)
+        public CustomScheduleEvent(CustomScheduleDayPopup caller)
         {
             this.caller = caller;
         }

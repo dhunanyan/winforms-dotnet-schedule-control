@@ -1,6 +1,6 @@
 ﻿namespace CustomCalendar
 {
-    partial class FormDayPopup
+    partial class CustomScheduleDayPopup
     {
         /// <summary>
         /// Required designer variable.
@@ -194,10 +194,12 @@
             this.comboBoxPriority.FormattingEnabled = true;
             this.comboBoxPriority.IntegralHeight = false;
             this.comboBoxPriority.Items.AddRange(new object[] {
-            "Low",
-            "Medium",
-            "High",
-            "None"});
+            "Yellow",
+            "Green",
+            "Orange",
+            "Blue",
+            "Red",
+            "Purple"});
             this.comboBoxPriority.Location = new System.Drawing.Point(30, 274);
             this.comboBoxPriority.Name = "comboBoxPriority";
             this.comboBoxPriority.Size = new System.Drawing.Size(220, 33);
@@ -212,9 +214,9 @@
             this.labelPriority.Location = new System.Drawing.Point(25, 243);
             this.labelPriority.Margin = new System.Windows.Forms.Padding(0);
             this.labelPriority.Name = "labelPriority";
-            this.labelPriority.Size = new System.Drawing.Size(79, 28);
+            this.labelPriority.Size = new System.Drawing.Size(57, 28);
             this.labelPriority.TabIndex = 9;
-            this.labelPriority.Text = "Priority";
+            this.labelPriority.Text = "Color";
             // 
             // buttonAddEvent
             // 
@@ -232,7 +234,7 @@
             this.buttonAddEvent.UseVisualStyleBackColor = false;
             this.buttonAddEvent.Click += new System.EventHandler(this.buttonAddEvent_Click);
             // 
-            // FormDayPopup
+            // CustomScheduleDayPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -252,7 +254,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(550, 380);
-            this.Name = "FormDayPopup";
+            this.Name = "CustomScheduleDayPopup";
             this.Text = "FormDayPopup";
             this.TopMost = true;
             this.ResumeLayout(false);

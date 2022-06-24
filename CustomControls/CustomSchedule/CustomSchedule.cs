@@ -14,21 +14,21 @@ namespace CustomCalendar.CustomControls.CustomSchedule
     {
         public Dictionary<string, List<CustomScheduleEvent>> AllEvents { get; set; } = new Dictionary<string, List<CustomScheduleEvent>>();
 
-        public DateTime Time {get; set;} = DateTime.Now;
+        public DateTime Time { get; set; } = DateTime.Now;
 
-        private string[] daysOfWeek =  new string[]{ 
-            "Sunday", 
-            "Monday", 
-            "Tuesday", 
-            "Wednesday", 
-            "Thursday", 
-            "Friday", 
-            "Saturday" 
+        private string[] daysOfWeek = new string[]{
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
         };
         int displayMonth = 0;
         int displayYear = 0;
         int displayDay = 0;
-        bool isWeekDisplayed = false;
+        public bool IsWeekDisplayed { get; set; } = false;
         public int counter = 0;
 
         public CustomSchedule()
@@ -37,10 +37,11 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             displayDay = GetCurrentDay();
             displayMonth = GetCurrentMonth();
             displayYear = GetCurrentYear();
-            GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
+            GenerateCurrentMonthOrWeek(displayDay, displayMonth, displayYear, IsWeekDisplayed);
             SetMonthYear(GetCurrentDay(), GetCurrentMonth(), GetCurrentYear());
             InitializeTimer();
-            GenerateTimePanel(isWeekDisplayed);
+            GenerateTimePanel(IsWeekDisplayed);
+
         }
 
         private string GetCurrentDate()
@@ -82,7 +83,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             List<string> AllEventsKeys = (List<string>)AllEvents.Keys.ToList();
             AllEventsKeys.Sort();
-            
+
             return AllEventsKeys;
         }
 
@@ -123,97 +124,22 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             return result;
         }
 
-        private void GenerateCurrentMonthDays(int day, int month, int year, bool isWeekDisplay)
+        private int GetFirstDayOfCurrentWeek(){
+
+            int sunday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek).Day; 
+            return sunday;
+        }
+
+        private void GenerateCurrentMonthOrWeek(int day, int month, int year, bool isWeekDisplay)
         {
             flowLayoutPanelDays.Controls.Clear();
-            if (!isWeekDisplay)
-            {
-                string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(day, month, year)).DayOfWeek.ToString();
-                int firstDayOfMonthIndex = Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek);
-                int dayCounter = 1;
-                int width = 10;
-                int height = 10;
-                for (int i = 0; i < 42; i++)
-                {
-                    CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, dayCounter, $"{dayCounter}/{month}/{year}", isWeekDisplay);
-                    if (i < firstDayOfMonthIndex || i > GetCurrentMonthDaysNumber(year, month) + firstDayOfMonthIndex - 1)
-                    {
-                        currentDayPanel.Text = null;
-                        currentDayPanel.Enabled = false;
-                        currentDayPanel.BackColor = Color.FromArgb(80, 46, 46, 46);
-                        currentDayPanel.Controls.Clear();
-                        currentDayPanel.Tag = 0;
-                    }
-                    else if (dayCounter <= GetCurrentMonthDaysNumber(year, month))
-                    {
-                        currentDayPanel.Tag = ConvertDateWithZeros($"{dayCounter}/{month}/{year}");
-                        currentDayPanel.Enabled = true;
-                        currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && dayCounter == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
-                        currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
-                        currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
-                        currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
-                        dayCounter++;
-                    }
 
-                    if (width >= 610)
-                    {
-                        height += 100;
-                        width = 10;
-                    }
-                    else
-                    {
-                        width += 100;
-                    }
-
-                    flowLayoutPanelDays.Controls.Add(currentDayPanel);
-                }
+            if (!isWeekDisplay) {
+                GenerateCurrentMonthDays(day, month, year, isWeekDisplay);
             }
             else
             {
-                flowLayoutPanelDays.Padding = new Padding(5);
-                string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(day, month, year)).DayOfWeek.ToString();
-                int startDay = day;
-
-                if(day == GetCurrentDay())
-                {
-                    startDay = 7 - Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek) + 1;
-                    while (!((startDay < day) && (day < startDay + 7)))
-                    {
-                        Console.WriteLine($"DAYS: {startDay}");
-                        startDay += 7;
-                    }
-                }
-
-
-                Console.WriteLine($"START DAY: {startDay}");
-
-
-                displayDay = startDay;
-
-                int width = 10;
-                int height = 610;
-
-
-                for(int i  = 0; i < 7; i++)
-                {
-                    if (startDay > GetCurrentMonthDaysNumber(year, month))
-                    {
-                        startDay = 1;
-                    }
-
-                    CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, startDay, $"{startDay}/{month}/{year}", isWeekDisplay);
-                    currentDayPanel.Tag = ConvertDateWithZeros($"{startDay}/{month}/{year}");
-                    currentDayPanel.Enabled = true;
-                    currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && startDay == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
-                    currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
-                    currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
-                    currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
-                    
-                    flowLayoutPanelDays.Controls.Add(currentDayPanel);
-
-                    startDay++;
-                    width += 10;
-                }
+                GenerateCurrentWeekDays(day, month, year, isWeekDisplay);
             }
         }
 
@@ -243,9 +169,22 @@ namespace CustomCalendar.CustomControls.CustomSchedule
             }
         }
 
+        public int GetEventStartOrAnd(string time)
+        {
+            if(time.Split(':')[1] == "30")
+            {
+                return 610 / 24 * int.Parse(time.Split(':')[0]) + (25 / 2);
+            }
+            else
+            {
+                return 610 / 24 * int.Parse(time.Split(':')[0]);
+            }
+            
+        }
+
         private void FillMonthEvents()
         {
-            foreach(Control c in flowLayoutPanelDays.Controls)
+            foreach(CustomScheduleDay.CustomScheduleDay c in flowLayoutPanelDays.Controls)
             {
                 if(c is CustomScheduleDay.CustomScheduleDay && c.Tag.ToString() != "0")
                 {
@@ -255,52 +194,168 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                         continue;
                     }
 
-                    foreach(CustomScheduleEvent currentEvent in AllEvents[currentKey])
+                    foreach (CustomScheduleEvent currentEvent in AllEvents[currentKey])
                     {
-                        Button addedEvent = new Button()
-                        {
-                            Text = "",
-                            Size = new Size(12, 12),
-                            Margin = new Padding(1),
-                            FlatStyle = FlatStyle.Flat,
-                            Cursor = Cursors.Hand,
-                            Location = new Point(0, 0),
-                            Name = $"{currentEvent.Date}/{currentEvent.TimeFrom}-{currentEvent.TimeTo}",
-                            UseVisualStyleBackColor = false,
-                            Enabled = true
-                        };
-
+                        Button addedEvent = new Button();
+                        addedEvent.Font = new Font("Microsoft JhengHei Light", IsWeekDisplayed ? 8F : 4.5F, FontStyle.Bold);
+                        addedEvent.ForeColor = Color.FromArgb(64, 64, 64);
+                        addedEvent.Text = IsWeekDisplayed ? $"{currentEvent.Title}\r\n{currentEvent.TimeFrom}-{currentEvent.TimeTo}" : (currentEvent.Title.Length > 7 ? currentEvent.Title.Substring(0, 7) + "..." : currentEvent.Title);
+                        addedEvent.Size = IsWeekDisplayed ? new Size(86, GetEventStartOrAnd(currentEvent.TimeTo == "00:00" ? "24:00" : currentEvent.TimeTo) - GetEventStartOrAnd(currentEvent.TimeFrom)) : new Size(68, 16);
+                        addedEvent.Margin = new Padding(1);
+                        addedEvent.Padding = new Padding(0);
+                        addedEvent.FlatStyle = FlatStyle.Flat;
+                        addedEvent.Cursor = Cursors.Hand;
+                        addedEvent.Tag = Array.IndexOf(AllEvents[currentKey].ToArray(), currentEvent);
+                        addedEvent.Location = IsWeekDisplayed ? new Point(0, GetEventStartOrAnd(currentEvent.TimeFrom)) : new Point(0, 20 * Array.IndexOf(AllEvents[currentKey].ToArray(), currentEvent));
+                        addedEvent.Name = $"{currentEvent.Date} {currentEvent.TimeFrom}-{currentEvent.TimeTo}";
+                        addedEvent.UseVisualStyleBackColor = false;
+                        addedEvent.Enabled = false;
                         addedEvent.FlatAppearance.BorderSize = 1;
-                        addedEvent.FlatAppearance.BorderColor = Color.FromArgb(92, 92, 92);
+                        addedEvent.TextAlign = ContentAlignment.TopLeft;
+                        currentEvent.CurrentEvent = addedEvent;
 
-
-                        if (currentEvent.Priority == "High")
+                        if (currentEvent.Priority == "Yellow")
                         {
-                            addedEvent.BackColor = Color.FromArgb(222, 23, 56);
+                            addedEvent.BackColor = Color.FromArgb(190, 253, 238, 101);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(253, 227, 0);
                         }
-                        else if (currentEvent.Priority == "Medium")
+                        else if(currentEvent.Priority == "Green")
                         {
-                            addedEvent.BackColor = Color.FromArgb(247, 222, 58);
-
+                            addedEvent.BackColor = Color.FromArgb(190, 82, 206, 144);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(0, 174, 86);
                         }
-                        else if (currentEvent.Priority == "Low")
+                        else if(currentEvent.Priority == "Orange")
                         {
-                            addedEvent.BackColor = Color.FromArgb(118, 187, 104);
+                            addedEvent.BackColor = Color.FromArgb(190, 232, 130, 93);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(218, 59, 1);
+                        }
+                        else if (currentEvent.Priority == "Blue")
+                        {
+                            addedEvent.BackColor = Color.FromArgb(190, 92, 169, 229);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 212);
+                        }
+                        else if (currentEvent.Priority == "Red")
+                        {
+                            addedEvent.BackColor = Color.FromArgb(190, 220, 98, 109);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(197, 15, 31);
                         }
                         else
                         {
-                            addedEvent.BackColor = Color.FromArgb(72, 97, 163);
+                            addedEvent.BackColor = Color.FromArgb(90, 177, 170, 235);
+                            addedEvent.FlatAppearance.BorderColor = Color.FromArgb(131, 120, 222);
                         }
 
-                        ((FlowLayoutPanel)c.Controls.Find($"flowLayoutPanelDay{c.Name.Split('l')[1]}", true)[0]).Controls.Add(addedEvent);
+                        ((Panel)c.Controls.Find($"panelInnerEvents{c.Name.Split('l')[1]}", true)[0]).Controls.Add(addedEvent);
+
+
+                        if (Array.IndexOf(AllEvents[currentKey].ToArray(), currentEvent) > 2 && !IsWeekDisplayed)
+                        {
+                            foreach(Button ev in ((Panel)c.Controls.Find($"panelInnerEvents{c.Name.Split('l')[1]}", true)[0]).Controls)
+                            {
+                                if (int.Parse(ev.Tag.ToString()) >= 2)
+                                {
+                                    ev.Visible = false;
+                                }
+                            }
+
+                            c.infoButton.Visible = true;
+                            c.infoButton.Text = "+" + (Array.IndexOf(AllEvents[currentKey].ToArray(), currentEvent) - 1).ToString();
+                            c.infoButton.ForeColor = Color.FromArgb(241, 241, 241);
+                        }
+
+                        c.currentDayEventsCount = currentEvent.caller.caller.currentDayEventsCount;
+                        ((Panel)c.Controls.Find($"panelInnerEvents{c.Name.Split('l')[1]}", true)[0]).Controls.SetChildIndex(addedEvent, AllEvents[currentKey].Count() - Array.IndexOf(AllEvents[currentKey].ToArray(), currentEvent));
                     }
                 }
             }
         }
 
+        private void GenerateCurrentMonthDays(int day, int month, int year, bool isWeekDisplay)
+        {
+
+            string currentMonthFirstDayOfWeek = DateTime.Parse(GetCurrentDate(1, month, year)).DayOfWeek.ToString();
+            int firstDayOfMonthIndex = Array.IndexOf(daysOfWeek, currentMonthFirstDayOfWeek);
+            int dayCounter = 1;
+            int width = 10;
+            int height = 10;
+            for (int i = 0; i < 42; i++)
+            {
+                CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, dayCounter, $"{dayCounter}/{month}/{year}", isWeekDisplay);
+                if (i < firstDayOfMonthIndex || i > GetCurrentMonthDaysNumber(year, month) + firstDayOfMonthIndex - 1)
+                {
+                    currentDayPanel.Text = null;
+                    currentDayPanel.Enabled = false;
+                    currentDayPanel.BackColor = Color.FromArgb(80, 46, 46, 46);
+                    currentDayPanel.Controls.Clear();
+                    currentDayPanel.Tag = 0;
+                }
+                else if (dayCounter <= GetCurrentMonthDaysNumber(year, month))
+                {
+                    currentDayPanel.Tag = ConvertDateWithZeros($"{dayCounter}/{month}/{year}");
+                    currentDayPanel.Enabled = true;
+                    currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && dayCounter == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
+                    currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
+                    currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
+                    currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
+                    currentDayPanel.currentDayEventsCount = AllEvents.Keys.Contains(currentDayPanel.Tag.ToString()) ?  AllEvents[currentDayPanel.Tag.ToString()].ToList().Count() - 1 : 0;
+
+                    dayCounter++;
+                }
+
+                if (width >= 610)
+                {
+                    height += 100;
+                    width = 10;
+                }
+                else
+                {
+                    width += 100;
+                }
+
+                flowLayoutPanelDays.Controls.Add(currentDayPanel);
+            }
+        }
+
+        private void GenerateCurrentWeekDays(int day, int month, int year, bool isWeekDisplay)
+        {
+            int startDay = day;
+
+            if (day == GetCurrentDay() && month == GetCurrentMonth() && year == GetCurrentYear())
+            {
+                startDay = GetFirstDayOfCurrentWeek();
+            }
+
+            displayDay = startDay;
+
+            int width = 10;
+            int height = 610;
+
+            for (int i = 0; i < 7; i++)
+            {
+                if (startDay > GetCurrentMonthDaysNumber(year, month))
+                {
+                    startDay = 1;
+                }
+
+                CustomScheduleDay.CustomScheduleDay currentDayPanel = new CustomScheduleDay.CustomScheduleDay(this, i, width, height, startDay, $"{startDay}/{month}/{year}", isWeekDisplay);
+                currentDayPanel.Tag = ConvertDateWithZeros($"{startDay}/{month}/{year}");
+                currentDayPanel.Enabled = true;
+                currentDayPanel.BackColor = (month == GetCurrentMonth() && year == GetCurrentYear() && startDay == GetCurrentDay()) ? Color.FromArgb(72, 72, 72) : Color.FromArgb(46, 46, 46);
+                currentDayPanel.Click += new EventHandler(CurrentDayButton_Click);
+                currentDayPanel.MouseEnter += new EventHandler(CurrentDayButton_MouseEnter);
+                currentDayPanel.MouseLeave += new EventHandler(CurrentDayButton_MouseLeave);
+                currentDayPanel.currentDayEventsCount = AllEvents.Keys.Contains(currentDayPanel.Tag.ToString()) ? AllEvents[currentDayPanel.Tag.ToString()].ToList().Count() - 1 : 0;
+
+                flowLayoutPanelDays.Controls.Add(currentDayPanel);
+
+                startDay++;
+                width += 10;
+            }
+        }
+
         private void ButtonLeft_Click(object sender, EventArgs e)
         {
-            if (!isWeekDisplayed)
+            if (!IsWeekDisplayed)
             {
                 if (displayMonth < 2)
                 {
@@ -312,19 +367,34 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                     displayMonth--;
                 }
 
-                GenerateCurrentMonthDays(1, displayMonth, displayYear, isWeekDisplayed);
+                GenerateCurrentMonthOrWeek(displayDay, displayMonth, displayYear, IsWeekDisplayed);
                 SetMonthYear(displayDay, displayMonth, displayYear);
-                FillMonthEvents();
             }
             else
             {
+                displayDay -= 7;
+                if (displayDay < 1)
+                {
+                    displayMonth--;
+                    displayDay = GetCurrentMonthDaysNumber(displayYear, displayMonth) + displayDay;
+                }
 
+                if (displayMonth < 2)
+                {
+                    displayMonth = 12;
+                    displayYear--;
+                }
+
+                GenerateCurrentMonthOrWeek(displayDay, displayMonth, displayYear, IsWeekDisplayed);
+                SetMonthYear(displayDay, displayMonth, displayYear);
             }
+
+            FillMonthEvents();
         }
 
         private void ButtonRight_Click(object sender, EventArgs e)
         {
-            if (!isWeekDisplayed)
+            if (!IsWeekDisplayed)
             {
                 if (displayMonth > 11)
                 {
@@ -335,36 +405,26 @@ namespace CustomCalendar.CustomControls.CustomSchedule
                 {
                     displayMonth++;
                 }
-                GenerateCurrentMonthDays(1, displayMonth, displayYear, isWeekDisplayed);
+                GenerateCurrentMonthOrWeek(1, displayMonth, displayYear, IsWeekDisplayed);
                 SetMonthYear(displayDay, displayMonth, displayYear);
             }
             else
             {
                 displayDay += 7;
-                Console.WriteLine($"BEFORE IF: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
                 if (displayDay > GetCurrentMonthDaysNumber(displayYear, displayMonth))
                 {
-                    Console.WriteLine($"IN IF1: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
-                    displayDay = GetCurrentMonthDaysNumber(displayYear, displayMonth) - displayDay;
+                    displayDay -= GetCurrentMonthDaysNumber(displayYear, displayMonth);
                     displayMonth++;
-                    Console.WriteLine($"IN IF2: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
-
                 }
-
-                Console.WriteLine($"AFTER IF: {displayDay} > {GetCurrentMonthDaysNumber(displayYear, displayMonth)}");
-
 
                 if (displayMonth > 11)
                 {
                     displayMonth = 1;
                     displayYear++;
                 }
-                else
-                {
-                    displayMonth++;
-                }
 
-                GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
+                GenerateCurrentMonthOrWeek(displayDay, displayMonth, displayYear, IsWeekDisplayed);
+                SetMonthYear(displayDay, displayMonth, displayYear);
             }
 
             FillMonthEvents();
@@ -377,7 +437,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
 
             try
             {
-                using (FormDayPopup uu = new FormDayPopup(currentDayPanel))
+                using (CustomScheduleDayPopup uu = new CustomScheduleDayPopup(currentDayPanel))
                 {
                     //formBackground.StartPosition = FormStartPosition.Manual;
                     //formBackground.FormBorderStyle = FormBorderStyle.None;
@@ -434,15 +494,15 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             Button currentButton = (Button)sender;
 
-            isWeekDisplayed = !isWeekDisplayed;
+            IsWeekDisplayed = !IsWeekDisplayed;
 
-            displayDay = GetCurrentDay();
+            displayDay = GetFirstDayOfCurrentWeek();
             displayMonth = GetCurrentMonth();
             displayYear = GetCurrentYear();
 
-            GenerateCurrentMonthDays(displayDay, displayMonth, displayYear, isWeekDisplayed);
+            GenerateCurrentMonthOrWeek(displayDay, displayMonth, displayYear, IsWeekDisplayed);
             SetMonthYear(GetCurrentDay(), GetCurrentMonth(), GetCurrentYear());
-            GenerateTimePanel(isWeekDisplayed);
+            GenerateTimePanel(IsWeekDisplayed);
 
             FillMonthEvents();
             DisabledPastEvents();
@@ -452,22 +512,14 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             foreach (string key in GetAllEventsKeys().ToList())
             {
-                Console.WriteLine($"{key} IM HEREEEEEE: {DateTime.Compare(DateTime.Now, ConvertStringToDateTime(key))}");
-                Console.WriteLine(ConvertStringToDateTime(key));
-                Console.WriteLine(DateTime.Now.Date);
                 if ((String.Compare(DateTime.Now.Date.ToString().Split(' ')[0], SwithMonthAndDayInDate(key)) >= 0) && (DateTime.Now.Date.ToString().Split(' ')[0] != SwithMonthAndDayInDate(key)))
                 {
                     foreach (CustomScheduleEvent eventInList in AllEvents[key].ToList())
                     {
                         eventInList.CurrentEvent.Enabled = false;
-                        Console.WriteLine(eventInList.CurrentEvent.Enabled);
                     }
                 }
-
-                Console.WriteLine("end");
             }
-
-            Console.WriteLine("ENDDDD \n");
         }
 
         private CustomScheduleEvent GetFirstEnabledEvent(string key)
@@ -491,16 +543,7 @@ namespace CustomCalendar.CustomControls.CustomSchedule
         {
             CustomScheduleEvent eventToRemind = GetFirstEnabledEvent(ConvertDateWithZeros(SwithMonthAndDayInDate(GetCurrentDate())));
 
-
             DisabledPastEvents();
-            if (AllEvents.Count > 0 && eventToRemind!=null)
-            {
-                Console.WriteLine($"First enabled event minutes: {eventToRemind.TimeFrom.Split(':')[1]}");
-            }
-            else
-            {
-                Console.WriteLine("Sorry no events :(");
-            }
 
             if ((DateTime.Now.Minute < 15) && (counter == 0))
             {
